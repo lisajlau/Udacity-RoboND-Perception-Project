@@ -1,3 +1,4 @@
+
 # 3D Perception
 Before starting any work on this project, please complete all steps for [Exercise 1, 2 and 3](https://github.com/udacity/RoboND-Perception-Exercises). At the end of Exercise-3 you have a pipeline that can identify points that belong to a specific object.
 
@@ -98,3 +99,4 @@ $ roslaunch pr2_robot pick_place_project.launch
 For all the step-by-step details on how to complete this project see the [RoboND 3D Perception Project Lesson]()
 Note: The robot is a bit moody at times and might leave objects on the table or fling them across the room :D
 As long as your pipeline performs succesful recognition, your project will be considered successful even if the robot feels otherwise!
+
