@@ -1,0 +1,81 @@
+Script started on Sat 05 Aug 2017 23:15:11 BST
+]0;lisa@lisa-MacBookPro: ~/robo_ws/Perception/src/pr2/pr2_robot[01;32mlisa@lisa-MacBookPro[00m:[01;34m~/robo_ws/Perception/src/pr2/pr2_robot[00m$ scir[K[Kripts
+lNo command 'scripts' found, did you mean:
+ Command 'script6' from package 'ipv6toolkit' (universe)
+ Command 'script' from package 'bsdutils' (main)
+scripts: command not found
+]0;lisa@lisa-MacBookPro: ~/robo_ws/Perception/src/pr2/pr2_robot[01;32mlisa@lisa-MacBookPro[00m:[01;34m~/robo_ws/Perception/src/pr2/pr2_robot[00m$ l[Kcd scripts/
+]0;lisa@lisa-MacBookPro: ~/robo_ws/Perception/src/pr2/pr2_robot/scripts[01;32mlisa@lisa-MacBookPro[00m:[01;34m~/robo_ws/Perception/src/pr2/pr2_robot/scripts[00m$ ls
+[0m[01;32mgrasp_server.py[0m  [01;32mpr2_safe_spawner.sh[0m  [01;32mproject_template.py[0m
+pcl_helper.py    [01;32mproject.py[0m           [01;34mrospy_message_converter[0m
+]0;lisa@lisa-MacBookPro: ~/robo_ws/Perception/src/pr2/pr2_robot/scripts[01;32mlisa@lisa-MacBookPro[00m:[01;34m~/robo_ws/Perception/src/pr2/pr2_robot/scripts[00m$ ./project.p y
+Traceback (most recent call last):
+  File "./project.py", line 8, in <module>
+    from sensor_stick.srv import GetNormals
+ImportError: No module named sensor_stick.srv
+]0;lisa@lisa-MacBookPro: ~/robo_ws/Perception/src/pr2/pr2_robot/scripts[01;32mlisa@lisa-MacBookPro[00m:[01;34m~/robo_ws/Perception/src/pr2/pr2_robot/scripts[00m$ cd ..
+]0;lisa@lisa-MacBookPro: ~/robo_ws/Perception/src/pr2/pr2_robot[01;32mlisa@lisa-MacBookPro[00m:[01;34m~/robo_ws/Perception/src/pr2/pr2_robot[00m$ chmod u_x[K[K+x pe[Krok[Kject.p y
+chmod: cannot access 'project.py': No such file or directory
+]0;lisa@lisa-MacBookPro: ~/robo_ws/Perception/src/pr2/pr2_robot[01;32mlisa@lisa-MacBookPro[00m:[01;34m~/robo_ws/Perception/src/pr2/pr2_robot[00m$ ls
+CMakeLists.txt  [0m[01;34minclude[0m  [01;34mmaterials[0m  [01;34mmodels[0m       [01;34mscripts[0m  [01;34msrv[0m         [01;34murdf[0m
+[01;34mconfig[0m          [01;34mlaunch[0m   [01;34mmeshes[0m     package.xml  [01;34msrc[0m      typescript  [01;34mworlds[0m
+]0;lisa@lisa-MacBookPro: ~/robo_ws/Perception/src/pr2/pr2_robot[01;32mlisa@lisa-MacBookPro[00m:[01;34m~/robo_ws/Perception/src/pr2/pr2_robot[00m$ cd scripts/
+]0;lisa@lisa-MacBookPro: ~/robo_ws/Perception/src/pr2/pr2_robot/scripts[01;32mlisa@lisa-MacBookPro[00m:[01;34m~/robo_ws/Perception/src/pr2/pr2_robot/scripts[00m$ cd scripts/ [A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cls[K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cchmod u+x prroject.py
+]0;lisa@lisa-MacBookPro: ~/robo_ws/Perception/src/pr2/pr2_robot/scripts[01;32mlisa@lisa-MacBookPro[00m:[01;34m~/robo_ws/Perception/src/pr2/pr2_robot/scripts[00m$ ./project.p y
+Traceback (most recent call last):
+  File "./project.py", line 8, in <module>
+    from sensor_stick.srv import GetNormals
+ImportError: No module named sensor_stick.srv
+]0;lisa@lisa-MacBookPro: ~/robo_ws/Perception/src/pr2/pr2_robot/scripts[01;32mlisa@lisa-MacBookPro[00m:[01;34m~/robo_ws/Perception/src/pr2/pr2_robot/scripts[00m$ cd ..
+]0;lisa@lisa-MacBookPro: ~/robo_ws/Perception/src/pr2/pr2_robot[01;32mlisa@lisa-MacBookPro[00m:[01;34m~/robo_ws/Perception/src/pr2/pr2_robot[00m$ cd .../project.py
+bash: ./project.py: No such file or directory
+]0;lisa@lisa-MacBookPro: ~/robo_ws/Perception/src/pr2/pr2_robot[01;32mlisa@lisa-MacBookPro[00m:[01;34m~/robo_ws/Perception/src/pr2/pr2_robot[00m$ ./scripts/project.p y
+Traceback (most recent call last):
+  File "./scripts/project.py", line 8, in <module>
+    from sensor_stick.srv import GetNormals
+ImportError: No module named sensor_stick.srv
+]0;lisa@lisa-MacBookPro: ~/robo_ws/Perception/src/pr2/pr2_robot[01;32mlisa@lisa-MacBookPro[00m:[01;34m~/robo_ws/Perception/src/pr2/pr2_robot[00m$ ./scripts/project.pyy[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K[Kt_t emplate.py 
+Traceback (most recent call last):
+  File "./scripts/project_template.py", line 8, in <module>
+    from sensor_stick.srv import GetNormals
+ImportError: No module named sensor_stick.srv
+]0;lisa@lisa-MacBookPro: ~/robo_ws/Perception/src/pr2/pr2_robot[01;32mlisa@lisa-MacBookPro[00m:[01;34m~/robo_ws/Perception/src/pr2/pr2_robot[00m$ rosrun pr2_robot r[Kpr okect.p[K[K[K[K[K[Kject.y[Kpy
+[rospack] Error: package 'pr2_robot' not found
+]0;lisa@lisa-MacBookPro: ~/robo_ws/Perception/src/pr2/pr2_robot[01;32mlisa@lisa-MacBookPro[00m:[01;34m~/robo_ws/Perception/src/pr2/pr2_robot[00m$ rosrun pr[K[K[K[K[K[K[K[K[Kclear
+[3;J[H[2J]0;lisa@lisa-MacBookPro: ~/robo_ws/Perception/src/pr2/pr2_robot[01;32mlisa@lisa-MacBookPro[00m:[01;34m~/robo_ws/Perception/src/pr2/pr2_robot[00m$ source ~/r[Kenv/percepttion.bash 
+]0;lisa@lisa-MacBookPro: ~/robo_ws/Perception/src/pr2/pr2_robot[01;32mlisa@lisa-MacBookPro[00m:[01;34m~/robo_ws/Perception/src/pr2/pr2_robot[00m$ rosrun pr2_
+pr2_moveit  pr2_robot   
+]0;lisa@lisa-MacBookPro: ~/robo_ws/Perception/src/pr2/pr2_robot[01;32mlisa@lisa-MacBookPro[00m:[01;34m~/robo_ws/Perception/src/pr2/pr2_robot[00m$ rosrun pr2_robot pr oject.py
+[1;31m[pcl::SampleConsensusModel::getSamples] Can not select 0 unique points out of 0!
+[0;m[1;31m[pcl::RandomSampleConsensus::computeModel] No samples could be selected!
+[0;m[1;31m[pcl::SACSegmentation::segment] Error segmenting the model! No solution found.
+[0;m[INFO] [1501971646.690737, 1172.345000]: Detected 0 objects: []
+[31m[ERROR] [1501971646.695992, 1172.559000]: bad callback: <function pcl_callback at 0x7f88c89e21b8>
+Traceback (most recent call last):
+  File "/opt/ros/kinetic/lib/python2.7/dist-packages/rospy/topics.py", line 750, in _invoke_callback
+    cb(msg)
+  File "/home/lisa/robo_ws/Perception/src/pr2/pr2_robot/scripts/project.py", line 164, in pcl_callback
+    pr2_mover(detected_objects_list)
+NameError: global name 'detected_objects_list' is not defined
+
+[0m[1;31m[pcl::SampleConsensusModel::getSamples] Can not select 0 unique points out of 0!
+[0;m[1;31m[pcl::RandomSampleConsensus::computeModel] No samples could be selected!
+[0;m[1;31m[pcl::SACSegmentation::segment] Error segmenting the model! No solution found.
+[0;m[INFO] [1501971651.986287, 1174.233000]: Detected 0 objects: []
+[31m[ERROR] [1501971651.989165, 1174.403000]: bad callback: <function pcl_callback at 0x7f88c89e21b8>
+Traceback (most recent call last):
+  File "/opt/ros/kinetic/lib/python2.7/dist-packages/rospy/topics.py", line 750, in _invoke_callback
+    cb(msg)
+  File "/home/lisa/robo_ws/Perception/src/pr2/pr2_robot/scripts/project.py", line 164, in pcl_callback
+    pr2_mover(detected_objects_list)
+NameError: global name 'detected_objects_list' is not defined
+
+[0m[1;31m[pcl::SampleConsensusModel::getSamples] Can not select 0 unique points out of 0!
+[0;m[1;31m[pcl::RandomSampleConsensus::computeModel] No samples could be selected!
+[0;m[1;31m[pcl::SACSegmentation::segment] Error segmenting the model! No solution found.
+[0;m[INFO] [1501971657.671252, 1176.344000]: Detected 0 objects: []
+[31m[ERROR] [1501971657.674504, 1176.563000]: bad callback: <function pcl_callback at 0x7f88c89e21b8>
+Traceback (most recent call last):
+  File "/opt/ros/kinetic/lib/python2.7/dist-packages/rospy/t
