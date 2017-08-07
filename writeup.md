@@ -2,7 +2,7 @@
 
 This project is on 3D perception. It uses a advanced robotics platform called the PR2 in simulation together with RBG-D data.
 
-![pr2 and table](./images/scenario.png)
+![pr2 and table](./pr2_robot/images/scenario.png)
 
 
 #### Perception Exercise 1, 2 and 3
@@ -20,19 +20,19 @@ There are 3 different scenarios (tabletop setups), where the number and type of 
 
 [Output yaml](https://github.com/lisaljl/Udacity-RoboND-Perception-Project/blob/master/pr2_robot/output/output_1.yaml)
 
-![pr2 and table world 1](./images/pick_list_1.png)
+![pr2 and table world 1](./pr2_robot/images/pick_list_1.png)
 
 ##### Test2 world and pick list 2
 
 [Output yaml](https://github.com/lisaljl/Udacity-RoboND-Perception-Project/blob/master/pr2_robot/output/output_2.yaml)
 
-![pr2 and table world 2](./images/pick_list_2.png)
+![pr2 and table world 2](./pr2_robot/images/pick_list_2.png)
 
 ##### Test3 world and pick list 3
 
 [Output yaml](https://github.com/lisaljl/Udacity-RoboND-Perception-Project/blob/master/pr2_robot/output/output_3.yaml)
 
-![pr2 and table world 3](./images/pick_list_3.png)
+![pr2 and table world 3](./pr2_robot/images/pick_list_3.png)
 
 
 Here are the steps required to detect objects from surroundings:
