@@ -12,6 +12,18 @@ https://github.com/lisaljl/Udacity-RoboND-Perception/blob/master/writeup.md) tha
 
 https://github.com/lisaljl/Udacity-RoboND-Perception
 
+#### Exercise 1
+Please refer to code for implementation
+
+#### Exercise 2
+Please refer to code for implementation
+
+#### Exercise 3
+Please refer to code for implementation
+For training with svm, it generates 30 data sets for each object. For the historgram, bin 32 is used, together with HSV. The SVM parameters was slightly tweaked  to use kernel = linear, C = 1.0 (default) and gamma = 'auto'
+
+![confusion matrix](./pr2_robot/images/confusion_matrix.png)
+
 ## Perception project
 
 There are 3 different scenarios (tabletop setups), where the number and type of objects differs for the different scenarios. Below are the results:
