@@ -25,6 +25,8 @@ from pr2_robot.srv import *
 from rospy_message_converter import message_converter
 import yaml
 
+import math
+
 
 # Helper function to get surface normals
 def get_normals(cloud):
@@ -76,14 +78,6 @@ def pcl_callback(pcl_msg):
     passthrough.set_filter_limits (axis_min, axis_max)
     cloud_filtered = passthrough.filter()
 
-    passthrough = cloud_filtered.make_passthrough_filter()
-    filter_axis = 'y'
-    passthrough.set_filter_field_name (filter_axis)
-    axis_min = -0.4
-    axis_max = 0.4
-    passthrough.set_filter_limits (axis_min, axis_max)
-    cloud_filtered = passthrough.filter()
-
     # RANSAC Plane Segmentation
     seg = cloud_filtered.make_segmenter()
     seg.set_model_type(pcl.SACMODEL_PLANE)
@@ -122,13 +116,15 @@ def pcl_callback(pcl_msg):
     cluster_cloud = pcl.PointCloud_PointXYZRGB()
     cluster_cloud.from_list(color_cluster_point_list)
 
+    # Creating collision map
+    collision_cloud = cloud_table
+
     # Publish ROS messages
-    ros_cloud_objects = pcl_to_ros(cloud_objects)
-    ros_cloud_table = pcl_to_ros(cloud_table)
-    ros_cluster_cloud = pcl_to_ros(cluster_cloud)
-    pcl_objects_pub.publish(ros_cloud_objects)
-    pcl_table_pub.publish(ros_cloud_table)
-    pcl_cluster_pub.publish(ros_cluster_cloud)
+    pcl_objects_pub.publish(pcl_to_ros(cloud_objects))
+    pcl_table_pub.publish(pcl_to_ros(cloud_table))
+    pcl_cluster_pub.publish(pcl_to_ros(cluster_cloud))
+
+    collision_map_pub.publish(pcl_to_ros(collision_cloud))
 
 # Exercise-3 TODOs:
 
@@ -188,7 +184,7 @@ def pcl_callback(pcl_msg):
 # function to load parameters and request PickPlace service
 def pr2_mover(detected_objects_list):
 
-    rospy.loginfo('start mover')
+    rospy.loginfo('start separation')
 
     # Initialize variables
     test_scene_num = Int32()
@@ -201,11 +197,9 @@ def pr2_mover(detected_objects_list):
     dropbox_pos_dict = {}
     dropbox_arm_dict = {}
     dict_list = []
-    pick_list = 3
+    pick_list = 5
 
     # Get/Read parameters
-    object_list_param = rospy.get_param('/object_list')
-    dropbox_param = rospy.get_param('/dropbox')
 
     # Parse parameters into individual variables
     for dropbox in dropbox_param:
@@ -213,6 +207,10 @@ def pr2_mover(detected_objects_list):
         dropbox_arm_dict[dropbox['group']] = dropbox['name']
 
     # TODO: Rotate PR2 in place to capture side tables for the collision map
+    try:
+        mover()
+    except rospy.ROSInterruptException:
+        pass
 
     # Loop through the pick list
     for object in object_list_param:
@@ -266,7 +264,23 @@ def pr2_mover(detected_objects_list):
     rospy.loginfo('write to output')
     send_to_yaml("output_" + str(pick_list) + ".yaml", dict_list)
 
+def mover():
 
+    rospy.loginfo('move the pr2 left and right')
+
+
+    pr2_joint_pub = rospy.Publisher('/pr2/world_joint_controller/command', Float64, queue_size= 1)
+
+    rate = rospy.Rate(20)
+    start_time = 0
+
+    while not start_time:
+        start_time = rospy.Time.now().to_sec()
+
+    while not rospy.is_shutdown():
+        elapsed = rospy.Time.now().to_sec() - start_time
+        pr2_joint_pub.publish(math.sin(2*math.pi*0.1*elapsed)*(math.pi))
+        rate.sleep()
 
 if __name__ == '__main__':
 
@@ -282,6 +296,10 @@ if __name__ == '__main__':
     pcl_cluster_pub = rospy.Publisher("/pcl_cluster", PointCloud2, queue_size=1)
     object_markers_pub = rospy.Publisher("/object_markers", Marker, queue_size=1)
     detected_objects_pub = rospy.Publisher("/detected_objects", DetectedObjectsArray, queue_size=1)
+    collision_map_pub = rospy.Publisher("/pr2/3d_map/points", PointCloud2, queue_size=1)
+
+    object_list_param = rospy.get_param('/object_list')
+    dropbox_param = rospy.get_param('/dropbox')
 
     # Load Model From disk
     model = pickle.load(open('model.sav', 'rb'))

@@ -52,8 +52,8 @@ Managed to detect 8/8 objects
 
 Here are the steps required to detect objects from surroundings:
 
-1. Get input from ROS
-2. Ros message to point cloud
+1. Get input from ROS, and convert to point cloud
+2. Satistical filtering to remove noise
 3. Voxel grid downsampling
 4. PassThrough Filter
 5. RANSAC Plane Segmentation
