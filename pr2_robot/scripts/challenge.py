@@ -50,11 +50,10 @@ def send_to_yaml(yaml_filename, dict_list):
     with open(yaml_filename, 'w') as outfile:
         yaml.dump(data_dict, outfile, default_flow_style=False)
 
-# Callback function for your Point Cloud Subscriber
-def pcl_callback(pcl_msg):
+def pr2_filtering(pcl_msg):
+    global detected_objects_point_list
 
-# Exercise-2 TODOs:
-    rospy.loginfo('pcl_callback')
+    rospy.loginfo('in pcl_callback')
     # Convert ROS msg to PCL data
     pcl_msg = ros_to_pcl(pcl_msg)
     
@@ -84,6 +83,14 @@ def pcl_callback(pcl_msg):
     passthrough_bottom.set_filter_field_name (filter_axis)
     axis_min = 0.55
     axis_max = 0.76
+    passthrough_bottom.set_filter_limits (axis_min, axis_max)
+    cloud_filtered_bottom = passthrough_bottom.filter()
+
+    passthrough_bottom = cloud_filtered_bottom.make_passthrough_filter()
+    filter_axis = 'x'
+    passthrough_bottom.set_filter_field_name (filter_axis)
+    axis_min = -0.5
+    axis_max = 0.4
     passthrough_bottom.set_filter_limits (axis_min, axis_max)
     cloud_filtered_bottom = passthrough_bottom.filter()
 
@@ -122,6 +129,7 @@ def pcl_callback(pcl_msg):
     for data in cloud_objects_top:
         points_list.append([data[0], data[1], data[2], data[3]])
 
+
     cloud_objects = pcl.PointCloud_PointXYZRGB()
     cloud_objects.from_list(points_list)
 
@@ -150,7 +158,6 @@ def pcl_callback(pcl_msg):
     # # Convert PCL data to ROS messages
     cluster_cloud = pcl.PointCloud_PointXYZRGB()
     cluster_cloud.from_list(color_cluster_point_list)
-
 
     # Publish ROS messages
     pcl_objects_pub.publish(pcl_to_ros(cloud_objects))
@@ -190,8 +197,16 @@ def pcl_callback(pcl_msg):
         detected_objects.append(do)
 
         if not any(x.label == label for x in all_detected_objects):
+            print("adding:" ,do.label)
             all_detected_objects.append(do)
 
+            for data in cloud_objects_cluster:
+                detected_objects_point_list.append([data[0], data[1], data[2], data[3]])
+
+    # detected_objects_point_list += points_list
+    cloud_detected_objects = pcl.PointCloud_PointXYZRGB()
+    cloud_detected_objects.from_list(detected_objects_point_list)
+    pcl_detected_pub.publish(pcl_to_ros(cloud_detected_objects))
 
     # Publish the list of detected objects
     rospy.loginfo('Detected {} objects: {}'.format(len(detected_objects_labels), detected_objects_labels))
@@ -209,16 +224,13 @@ def pcl_callback(pcl_msg):
 
     detected_objects_list = dict(zip(labels, centroids))
 
-    # Suggested location for where to invoke your pr2_mover() function within pcl_callback()
-    # Could add some logic to determine whether or not your object detections are robust
-    # before calling pr2_mover()
     try:
-        pr2_mover(detected_objects_list)
+        pr2_perception(detected_objects_list)
     except rospy.ROSInterruptException:
-        pass
+        pass       
 
 # function to load parameters and request PickPlace service
-def pr2_mover(detected_objects_list):
+def pr2_perception(detected_objects_list):
 
     rospy.loginfo('start separation')
 
@@ -232,12 +244,6 @@ def pr2_mover(detected_objects_list):
     place_pose = Pose()
     dict_list = []
     pick_list = 'challenge'
-
-    # TODO: Rotate PR2 in place to capture side tables for the collision map
-    try:
-        mover()
-    except rospy.ROSInterruptException:
-        pass
 
 
     for object in object_list_param:
@@ -274,34 +280,55 @@ def pr2_mover(detected_objects_list):
     rospy.loginfo('write to output')
     send_to_yaml("output_" + pick_list + ".yaml", dict_list)
 
-def mover():
-    global pr2_joint
+    try:
+        pr2_mover()
+    except rospy.ROSInterruptException:
+        pass
+
+
+# Callback function for your Point Cloud Subscriber
+def pcl_callback(pcl_msg):
+    global justStarted
+
+    rospy.loginfo('pcl_callback')
+
+    if justStarted:
+        justStarted = False
+        pr2_joint_pub.publish(-math.pi/2)
+
+    if math.fabs(world_joint_state) > 1.5:
+        pr2_filtering(pcl_msg)
+
+def pr2_mover():
 
     rospy.loginfo('move the pr2 left and right')
 
-    rate = rospy.Rate(50)
+    rate = rospy.Rate(0.1)
 
-    if pr2_joint == 0:
-        pr2_joint = -math.pi/2
-        pr2_joint_pub.publish(pr2_joint)
-        rate.sleep()
+    if world_joint_state > 1.5:
+        pr2_joint_pub.publish(-math.pi/2)
 
-    print("out:", pr2_joint)
+    if world_joint_state < -1.5:
+        pr2_joint_pub.publish(math.pi/2)
+
+    rate.sleep()
 
 def controller_callback(msg):
+    global world_joint_state
+
     rate = rospy.Rate(1)
     world_joint_state = msg.position[19]
     rate.sleep()
 
 if __name__ == '__main__':
 
+    justStarted = True
+    world_joint_state = 0
     all_detected_objects = []
-    cloud_all_objects = pcl.PointCloud_PointXYZRGB()
-    pr2_joint = 0
+    detected_objects_point_list = []
     dropbox_pos_dict = {}
     dropbox_arm_dict = {}
     object_list_dict = {}
-    world_joint_state = 0
 
     # ROS node initialization
     rospy.init_node('pr2', anonymous=True)
@@ -313,6 +340,7 @@ if __name__ == '__main__':
     # Create Publishers    
     pcl_objects_pub = rospy.Publisher("/pcl_objects", PointCloud2, queue_size=1)
     pcl_cluster_pub = rospy.Publisher("/pcl_cluster", PointCloud2, queue_size=1)
+    pcl_detected_pub = rospy.Publisher("/pcl_detected", PointCloud2, queue_size=1)
     object_markers_pub = rospy.Publisher("/object_markers", Marker, queue_size=1)
     detected_objects_pub = rospy.Publisher("/detected_objects", DetectedObjectsArray, queue_size=1)
     pcl_all_objects_pub = rospy.Publisher("/all_detected_objects", DetectedObjectsArray, queue_size=1)
@@ -340,7 +368,6 @@ if __name__ == '__main__':
 
     # Initialize color_list
     get_color_list.color_list = []
-
 
     # Spin while node is not shutdown
     while not rospy.is_shutdown():

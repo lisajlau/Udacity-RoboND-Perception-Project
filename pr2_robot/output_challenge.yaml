@@ -8,9 +8,32 @@ object_list:
       y: 0.0
       z: 0.0
     position:
-      x: -0.21721023321151733
-      y: -0.9605797529220581
-      z: 0.8924258351325989
+      x: -0.21567220985889435
+      y: -0.9210745692253113
+      z: 0.8950701355934143
+  place_pose:
+    orientation:
+      w: 0.0
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    position:
+      x: 0
+      y: 0.71
+      z: 0.605
+  test_scene_num: challenge
+- arm_name: left
+  object_name: book
+  pick_pose:
+    orientation:
+      w: 0.0
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    position:
+      x: -0.03820142522454262
+      y: 0.665104866027832
+      z: 0.6662509441375732
   place_pose:
     orientation:
       w: 0.0
@@ -31,9 +54,9 @@ object_list:
       y: 0.0
       z: 0.0
     position:
-      x: -0.05676240473985672
-      y: -0.6251373887062073
-      z: 0.6645774245262146
+      x: -0.05681325122714043
+      y: -0.5848467350006104
+      z: 0.6637102365493774
   place_pose:
     orientation:
       w: 0.0
@@ -46,6 +69,52 @@ object_list:
       z: 0.605
   test_scene_num: challenge
 - arm_name: right
+  object_name: biscuits
+  pick_pose:
+    orientation:
+      w: 0.0
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    position:
+      x: -0.33026695251464844
+      y: 0.7202309370040894
+      z: 0.6467911601066589
+  place_pose:
+    orientation:
+      w: 0.0
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    position:
+      x: 0
+      y: -0.71
+      z: 0.605
+  test_scene_num: challenge
+- arm_name: left
+  object_name: eraser
+  pick_pose:
+    orientation:
+      w: 0.0
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    position:
+      x: -0.19024550914764404
+      y: 0.5255361795425415
+      z: 0.5882462859153748
+  place_pose:
+    orientation:
+      w: 0.0
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    position:
+      x: 0
+      y: 0.71
+      z: 0.605
+  test_scene_num: challenge
+- arm_name: right
   object_name: soap2
   pick_pose:
     orientation:
@@ -54,9 +123,9 @@ object_list:
       y: 0.0
       z: 0.0
     position:
-      x: -0.292249858379364
-      y: -0.6105387806892395
-      z: 0.6167193055152893
+      x: -0.2922789454460144
+      y: -0.570494532585144
+      z: 0.6168371438980103
   place_pose:
     orientation:
       w: 0.0
@@ -77,9 +146,9 @@ object_list:
       y: 0.0
       z: 0.0
     position:
-      x: 0.13197888433933258
-      y: -0.9241263270378113
-      z: 0.8891385197639465
+      x: 0.13172295689582825
+      y: -0.8840200304985046
+      z: 0.889840304851532
   place_pose:
     orientation:
       w: 0.0
@@ -89,5 +158,28 @@ object_list:
     position:
       x: 0
       y: -0.71
+      z: 0.605
+  test_scene_num: challenge
+- arm_name: left
+  object_name: glue
+  pick_pose:
+    orientation:
+      w: 0.0
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    position:
+      x: -0.27666857838630676
+      y: 0.8227011561393738
+      z: 0.8906012177467346
+  place_pose:
+    orientation:
+      w: 0.0
+      x: 0.0
+      y: 0.0
+      z: 0.0
+    position:
+      x: 0
+      y: 0.71
       z: 0.605
   test_scene_num: challenge
