@@ -13,6 +13,7 @@ from sensor_stick.marker_tools import *
 from sensor_stick.msg import DetectedObjectsArray
 from sensor_stick.msg import DetectedObject
 from sensor_stick.pcl_helper import *
+from sensor_msgs.msg import JointState
 
 import rospy
 import tf
@@ -78,6 +79,14 @@ def pcl_callback(pcl_msg):
     passthrough.set_filter_limits (axis_min, axis_max)
     cloud_filtered = passthrough.filter()
 
+    passthrough = cloud_filtered.make_passthrough_filter()
+    filter_axis = 'y'
+    passthrough.set_filter_field_name (filter_axis)
+    axis_min = -0.4
+    axis_max = 0.4
+    passthrough.set_filter_limits (axis_min, axis_max)
+    cloud_filtered = passthrough.filter()
+
     # RANSAC Plane Segmentation
     seg = cloud_filtered.make_segmenter()
     seg.set_model_type(pcl.SACMODEL_PLANE)
@@ -116,21 +125,19 @@ def pcl_callback(pcl_msg):
     cluster_cloud = pcl.PointCloud_PointXYZRGB()
     cluster_cloud.from_list(color_cluster_point_list)
 
-    # Creating collision map
-    collision_cloud = cloud_table
-
     # Publish ROS messages
     pcl_objects_pub.publish(pcl_to_ros(cloud_objects))
     pcl_table_pub.publish(pcl_to_ros(cloud_table))
     pcl_cluster_pub.publish(pcl_to_ros(cluster_cloud))
 
-    collision_map_pub.publish(pcl_to_ros(collision_cloud))
 
 # Exercise-3 TODOs:
 
     # Classify the clusters! (loop through each detected cluster one at a time)
     detected_objects_labels = []
     detected_objects = []
+    detected_objects_cloud = {}
+    detected_objects_cloud["table"] = np.array(cloud_table.to_list())
 
     for index, pts_list in enumerate(cluster_indices):
 
@@ -158,6 +165,7 @@ def pcl_callback(pcl_msg):
         do.label = label
         do.cloud = ros_cluster
         detected_objects.append(do)
+        detected_objects_cloud[label] = np.array(cloud_objects_cluster.to_list())
 
     # Publish the list of detected objects
     rospy.loginfo('Detected {} objects: {}'.format(len(detected_objects_labels), detected_objects_labels))
@@ -177,12 +185,12 @@ def pcl_callback(pcl_msg):
     # Could add some logic to determine whether or not your object detections are robust
     # before calling pr2_mover()
     try:
-        pr2_mover(detected_objects_list)
+        pr2_mover(detected_objects_list, detected_objects_cloud)
     except rospy.ROSInterruptException:
         pass
 
 # function to load parameters and request PickPlace service
-def pr2_mover(detected_objects_list):
+def pr2_mover(detected_objects_list, detected_objects_cloud):
 
     rospy.loginfo('start separation')
 
@@ -194,23 +202,16 @@ def pr2_mover(detected_objects_list):
     pick_pose_point = Point()
     place_pose_point = Point()
     place_pose = Pose()
-    dropbox_pos_dict = {}
-    dropbox_arm_dict = {}
     dict_list = []
-    pick_list = 5
+    pick_list = 3
 
     # Get/Read parameters
 
-    # Parse parameters into individual variables
-    for dropbox in dropbox_param:
-        dropbox_pos_dict[dropbox['group']] = dropbox['position']
-        dropbox_arm_dict[dropbox['group']] = dropbox['name']
-
     # TODO: Rotate PR2 in place to capture side tables for the collision map
-    try:
-        mover()
-    except rospy.ROSInterruptException:
-        pass
+    # try:
+    #     rotate_left_right()
+    # except rospy.ROSInterruptException:
+    #     pass
 
     # Loop through the pick list
     for object in object_list_param:
@@ -218,6 +219,7 @@ def pr2_mover(detected_objects_list):
         group = object['group']
         name = object['name']
         pos = detected_objects_list.get(name)
+        print("object:", name)
         
         if pos is not None:
 
@@ -242,53 +244,67 @@ def pr2_mover(detected_objects_list):
             yaml_dict = make_yaml_dict(test_scene_num, arm_name, object_name, pick_pose, place_pose)
             dict_list.append(yaml_dict)
 
+            # Creating collision map
+            points_list = np.empty((0,4), float)
 
-    # Wait for 'pick_place_routine' service to come up
-    # rospy.loginfo('waiting on pick_place_routine')
-    # rospy.wait_for_service('pick_place_routine')
-    # rospy.loginfo('starting pick_place_routine')
+            del detected_objects_cloud[name]
+            for key, value in detected_objects_cloud.iteritems():
+                points_list = np.append(points_list, value[:,:4], axis=0)
 
-    # try:
-    #     pick_place_routine = rospy.ServiceProxy('pick_place_routine', PickPlace)
+            collision_cloud = pcl.PointCloud_PointXYZRGB()
+            collision_cloud.from_list(np.ndarray.tolist(points_list))
+            test_collision_map_pub.publish(pcl_to_ros(collision_cloud))
+            collision_map_pub.publish(pcl_to_ros(collision_cloud))
 
-    #     # TODO: Insert your message variables to be sent as a service request
-    #     resp = pick_place_routine(test_scene_num, object_name, arm_name, pick_pose, place_pose)
 
-    #     print ("Response: ",resp.success)
+            # Wait for 'pick_place_routine' service to come up
+            rospy.loginfo('waiting on pick_place_routine')
+            rospy.wait_for_service('pick_place_routine')
+            rospy.loginfo('starting pick_place_routine')
 
-    # except rospy.ServiceException, e:
-    #     print "Service call failed: %s"%e
+            try:
+                pick_place_routine = rospy.ServiceProxy('pick_place_routine', PickPlace)
+
+                # TODO: Insert your message variables to be sent as a service request
+                resp = pick_place_routine(test_scene_num, object_name, arm_name, pick_pose, place_pose)
+
+                print ("Response: ",resp.success)
+
+            except rospy.ServiceException, e:
+                print "Service call failed: %s"%e
 
     # Output your request parameters into output yaml file
 
     rospy.loginfo('write to output')
     send_to_yaml("output_" + str(pick_list) + ".yaml", dict_list)
 
-def mover():
+def rotate_left_right():
 
     rospy.loginfo('move the pr2 left and right')
 
+    rate = rospy.Rate(0.1)
 
-    pr2_joint_pub = rospy.Publisher('/pr2/world_joint_controller/command', Float64, queue_size= 1)
+    pr2_joint_pub.publish(-math.pi/2)
 
-    rate = rospy.Rate(20)
-    start_time = 0
+    # rate.sleep()
 
-    while not start_time:
-        start_time = rospy.Time.now().to_sec()
+def controller_callback(msg):
+    global world_joint_state
 
-    while not rospy.is_shutdown():
-        elapsed = rospy.Time.now().to_sec() - start_time
-        pr2_joint_pub.publish(math.sin(2*math.pi*0.1*elapsed)*(math.pi))
-        rate.sleep()
+    rate = rospy.Rate(1)
+    world_joint_state = msg.position[19]
+    rate.sleep()
 
 if __name__ == '__main__':
+    dropbox_pos_dict = {}
+    dropbox_arm_dict = {}
 
     # ROS node initialization
     rospy.init_node('pr2', anonymous=True)
 
     # Create Subscribers
     pcl_sub = rospy.Subscriber("/pr2/world/points", pc2.PointCloud2, pcl_callback, queue_size=1)
+    rospy.Subscriber("/joint_states", JointState, controller_callback, queue_size=1)
 
     # Create Publishers    
     pcl_objects_pub = rospy.Publisher("/pcl_objects", PointCloud2, queue_size=1)
@@ -296,10 +312,16 @@ if __name__ == '__main__':
     pcl_cluster_pub = rospy.Publisher("/pcl_cluster", PointCloud2, queue_size=1)
     object_markers_pub = rospy.Publisher("/object_markers", Marker, queue_size=1)
     detected_objects_pub = rospy.Publisher("/detected_objects", DetectedObjectsArray, queue_size=1)
+    test_collision_map_pub = rospy.Publisher("/pcl_collision_map", PointCloud2, queue_size=1)
     collision_map_pub = rospy.Publisher("/pr2/3d_map/points", PointCloud2, queue_size=1)
 
     object_list_param = rospy.get_param('/object_list')
     dropbox_param = rospy.get_param('/dropbox')
+
+    # Parse parameters into individual variables
+    for dropbox in dropbox_param:
+        dropbox_pos_dict[dropbox['group']] = dropbox['position']
+        dropbox_arm_dict[dropbox['group']] = dropbox['name']
 
     # Load Model From disk
     model = pickle.load(open('model.sav', 'rb'))

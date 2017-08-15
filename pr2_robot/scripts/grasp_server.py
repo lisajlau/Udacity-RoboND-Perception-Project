@@ -22,7 +22,6 @@ def get_grasp_handler(req):
     grasp_pose = Pose()
 
     grasp_list = rospy.get_param('/grasp_list')
-
     grasp_pose.position.x = grasp_list[test_num][object_name]['position']['x']
     grasp_pose.position.y = grasp_list[test_num][object_name]['position']['y']
     grasp_pose.position.z = grasp_list[test_num][object_name]['position']['z']
