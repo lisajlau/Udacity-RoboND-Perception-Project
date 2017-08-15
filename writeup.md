@@ -104,4 +104,8 @@ Now we have the points clouds which has all the objects, and the clusters for ea
 
 #### Challenge world
 
-[Challenge.py](./pr2_robot/scripts/challenge.py) contains the code for identifying objects in challenge.world. 
+[Challenge.py](./pr2_robot/scripts/challenge.py) contains the code for identifying objects in challenge world
+
+![pr2 and challenge](./pr2_robot/images/challenge.png)
+
+[Video] (https://youtu.be/haTRSOkH3rI)
