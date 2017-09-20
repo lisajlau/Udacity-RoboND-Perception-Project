@@ -101,6 +101,7 @@ Now we have the points clouds which has all the objects, and the clusters for ea
 #### Pick Place challenge
 
 [pick_place.py](./pr2_robot/scripts/pick_place.py) contains the code for pick place objects
+There was a problem where the collision map is not cleared whenever a new cluster is being subscribed. A way to clear the previous map is by calling the service clear_octomap 
 
 #### Challenge world
 
